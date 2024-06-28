@@ -50,7 +50,6 @@ html,
 body {
 	height: 100%;
 	margin: 0;
-	padding: 0;
 	display: flex;
 	flex-direction: column;
 }
@@ -87,9 +86,14 @@ h1 {
 	filter: brightness(1.2);
 }
 
-#nameInputBox {
+.name-input-container {
 	display: flex;
 	margin: 0 0;
+}
+
+.name-input-container p {
+	color:#007BFF;
+	margin-right: 1em;
 }
 
 #nameInput {
@@ -97,7 +101,7 @@ h1 {
 	margin-right: 10px;
 }
 
-.uiButton {
+.ui-button {
 	padding: 10px;
 	background-color: #007BFF;
 	color: #fff;
@@ -107,7 +111,7 @@ h1 {
 	margin-left: 10px;
 }
 
-.uiButton:hover {
+.ui-button:hover {
 	background-color: #0056b3;
 }
 

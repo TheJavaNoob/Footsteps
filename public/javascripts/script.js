@@ -10,6 +10,7 @@ var infoWindows = [];
 var currentInfoWindow = null;
 var linePaths = [];
 var deceased = [];
+var onPopupClose;
 // Use the function to load a JSON file
 var data;
 document.addEventListener('DOMContentLoaded', function () {
@@ -25,9 +26,9 @@ async function callback() {
 	if (name != "null" && name != "") {
 		document.getElementById('nameInput').value = name.replace("-", " ");
 		openPopup("Waiting for AI to respond...", close = false);
-        data = await askAI(name);
-        closePopup();
 		try {
+			data = await askAI(name);
+			closePopup();
             if(data === "") {
                 throw "AI returned an empty response";
             }
@@ -52,6 +53,10 @@ async function callback() {
 				deceased.push(item.is_deceased == true || item.is_deceased == "true" || item.is_deceased == "1");
 			}
 		} catch (e) {
+            onPopupClose = function(){
+				const urlWithoutParams = window.location.href.split('?')[0];
+				window.location.href = urlWithoutParams;
+            }
 			openPopup("Seems like AI didn't return a valid response, try another query.", close = true);
 			return;
 		}
@@ -131,6 +136,10 @@ function openPopup(text, close = true) {
 function closePopup() {
 	var popup = document.getElementById('popup');
 	popup.classList.remove('show');
+    if(onPopupClose !== undefined){
+        onPopupClose();
+        onPopupClose = undefined;
+    }
 }
 function loadMarkers() {
 	for (var i = 0; i < locations.length; i++) {
@@ -264,7 +273,9 @@ async function askAI(name) {
 	var response = await axios.post('ask', {
 		data: name
 	})
-    // Errors will be caught in the parsing process, so no need to check for status code
+	if(response.status != 200){
+		throw "Failed to ask AI";
+	}
 	return response.data;
 }
 function handleMapLoadError() {
